@@ -1,0 +1,77 @@
+import Foundation
+
+nonisolated enum AnalyticsMode: Equatable, Sendable {
+    case disabled
+    case production
+}
+
+nonisolated enum AnalyticsEnvironmentPolicy {
+    static func mode(
+        userEnabled: Bool,
+        isDevelopmentBuild: Bool,
+        isSimulator: Bool,
+        isPreview: Bool,
+        isRunningTests: Bool,
+        isVerifiedProductionInstall: Bool
+    ) -> AnalyticsMode {
+        guard userEnabled,
+              !isDevelopmentBuild,
+              !isSimulator,
+              !isPreview,
+              !isRunningTests,
+              isVerifiedProductionInstall else {
+            return .disabled
+        }
+        return .production
+    }
+
+    static func currentInstallMode() async -> AnalyticsMode {
+        #if DEBUG || targetEnvironment(simulator)
+        return .disabled
+        #else
+        let environment = Foundation.ProcessInfo.processInfo.environment
+        let isPreview = environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
+        let isRunningTests = environment["XCTestConfigurationFilePath"] != nil
+            || environment["XCTestBundlePath"] != nil
+
+        guard !isPreview, !isRunningTests else {
+            return .disabled
+        }
+
+        // VVTerm is installed from source builds, so there is no App Store
+        // receipt to verify an install against and analytics stay off.
+        let isVerifiedProductionInstall = false
+
+        return mode(
+            userEnabled: true,
+            isDevelopmentBuild: false,
+            isSimulator: false,
+            isPreview: isPreview,
+            isRunningTests: isRunningTests,
+            isVerifiedProductionInstall: isVerifiedProductionInstall
+        )
+        #endif
+    }
+}
+
+actor AnalyticsModeResolver {
+    typealias Provider = @Sendable () async -> AnalyticsMode
+
+    private let provider: Provider
+    private var resolution: Task<AnalyticsMode, Never>?
+
+    init(provider: @escaping Provider) {
+        self.provider = provider
+    }
+
+    func mode() async -> AnalyticsMode {
+        if let resolution {
+            return await resolution.value
+        }
+
+        let provider = provider
+        let resolution = Task { await provider() }
+        self.resolution = resolution
+        return await resolution.value
+    }
+}

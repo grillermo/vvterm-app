@@ -1,0 +1,210 @@
+//
+//  AboutSettingsView.swift
+//  VVTerm
+//
+
+import SwiftUI
+import UIKit
+
+// MARK: - Contact Option
+
+private struct ContactOption: Identifiable {
+    let title: String
+    let subtitle: String
+    let icon: String
+    let iconImage: String?
+    let iconText: String?
+    let color: Color
+    let url: String
+
+    var id: String { url }
+}
+
+private let contactOptions: [ContactOption] = [
+    ContactOption(title: String(localized: "Developer"), subtitle: "@wiedymi", icon: "", iconImage: nil, iconText: "𝕏", color: .primary, url: "https://x.com/wiedymi"),
+    ContactOption(title: String(localized: "Discord"), subtitle: String(localized: "Join Community"), icon: "", iconImage: "DiscordLogo", iconText: nil, color: Color(red: 0.345, green: 0.396, blue: 0.949), url: "https://discord.gg/zemMZtrkSb"),
+    ContactOption(title: String(localized: "Email"), subtitle: "vvterm@vivy.company", icon: "envelope.fill", iconImage: nil, iconText: nil, color: .orange, url: "mailto:vvterm@vivy.company")
+]
+
+// MARK: - About Settings View
+
+struct AboutSettingsView: View {
+    @Environment(\.openURL) private var openURL
+    @State private var isShowingOpenSourceLicenses = false
+
+    private var appVersion: String {
+        Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "2.1"
+    }
+
+    private var buildNumber: String {
+        Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? "1"
+    }
+
+    private var appIcon: Image {
+        if let icons = Bundle.main.infoDictionary?["CFBundleIcons"] as? [String: Any],
+           let primaryIcon = icons["CFBundlePrimaryIcon"] as? [String: Any],
+           let iconFiles = primaryIcon["CFBundleIconFiles"] as? [String],
+           let lastIcon = iconFiles.last,
+           let uiImage = UIImage(named: lastIcon) {
+            return Image(uiImage: uiImage)
+        }
+        return Image(systemName: "terminal")
+    }
+
+    private var subtitleColor: Color {
+        return Color(uiColor: .secondaryLabel)
+    }
+
+    private var footerColor: Color {
+        return Color(uiColor: .secondaryLabel)
+    }
+
+    private var copyrightLine: String {
+        let year = Calendar.current.component(.year, from: Date())
+        return "© \(year) Vivy Technologies Co., Limited"
+    }
+
+    var body: some View {
+        Form {
+            Section {
+                VStack(spacing: 16) {
+                    appIcon
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 80, height: 80)
+                        .cornerRadius(16)
+                        .shadow(color: .black.opacity(0.1), radius: 6, y: 3)
+
+                    Text("VVTerm")
+                        .font(.title)
+                        .fontWeight(.bold)
+
+                    Text(verbatim: "Version \(appVersion) (\(buildNumber))")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+
+                    Text("Professional SSH client\nfor iOS")
+                        .font(.footnote)
+                        .foregroundStyle(subtitleColor)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 20)
+            }
+
+            Section("Help & Feedback") {
+                Link(destination: URL(string: "https://apps.apple.com/app/id6757482822?action=write-review")!) {
+                    Label("Rate VVTerm", systemImage: "star")
+                }
+                .tint(.primary)
+                .foregroundStyle(.primary)
+
+                Link(destination: URL(string: "https://github.com/vivy-company/vvterm/issues")!) {
+                    Label("Report an Issue", systemImage: "exclamationmark.bubble")
+                }
+                .tint(.primary)
+                .foregroundStyle(.primary)
+
+                ForEach(contactOptions) { option in
+                    Button {
+                        openExternalURL(option.url)
+                    } label: {
+                        HStack(spacing: 14) {
+                            Group {
+                                if let imageName = option.iconImage {
+                                    Image(imageName)
+                                        .resizable()
+                                        .aspectRatio(contentMode: .fit)
+                                } else if let text = option.iconText {
+                                    Text(text)
+                                        .font(.system(size: 18, weight: .bold))
+                                } else {
+                                    Image(systemName: option.icon)
+                                }
+                            }
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(option.color)
+
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(option.title)
+                                    .font(.body)
+                                    .foregroundStyle(.primary)
+
+                                Text(option.subtitle)
+                                    .font(.caption)
+                                    .foregroundStyle(subtitleColor)
+                            }
+
+                            Spacer()
+
+                            Image(systemName: "arrow.up.right")
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .tint(.primary)
+                }
+            }
+
+            Section("Links") {
+                Link(destination: URL(string: "https://vvterm.com")!) {
+                    Label("Visit Website", systemImage: "globe")
+                }
+                .tint(.primary)
+                .foregroundStyle(.primary)
+
+                Link(destination: URL(string: "https://github.com/vivy-company/vvterm")!) {
+                    Label("GitHub", systemImage: "chevron.left.forwardslash.chevron.right")
+                }
+                .tint(.primary)
+                .foregroundStyle(.primary)
+            }
+
+            Section("Open Source") {
+                Button {
+                    isShowingOpenSourceLicenses = true
+                } label: {
+                    HStack {
+                        Label("Open Source & Licenses", systemImage: "doc.text.magnifyingglass")
+                        Spacer()
+                        Image(systemName: "chevron.right")
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityIdentifier("vvterm.settings.openSourceLicenses")
+            }
+
+            Section {
+                Button {
+                    openExternalURL("https://x.com/vivytech")
+                } label: {
+                    HStack {
+                        Text(verbatim: copyrightLine)
+                            .font(.footnote)
+                            .foregroundStyle(footerColor)
+                        Spacer()
+                        Image(systemName: "arrow.up.right")
+                            .font(.system(size: 9))
+                            .foregroundStyle(.tertiary)
+                    }
+                    .frame(maxWidth: .infinity)
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .formStyle(.grouped)
+        .adaptiveSoftScrollEdges()
+        .sheet(isPresented: $isShowingOpenSourceLicenses) {
+            OpenSourceLicensesView()
+        }
+    }
+
+    private func openExternalURL(_ urlString: String) {
+        guard let url = URL(string: urlString) else { return }
+        openURL(url)
+    }
+}

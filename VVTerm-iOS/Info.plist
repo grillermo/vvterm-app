@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>VVTerm</string>
+	<key>CFBundleExecutable</key>
+	<string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundleIdentifier</key>
+    <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+  <key>CFBundleName</key>
+  <string>$(PRODUCT_NAME)</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLName</key>
+      <string>$(PRODUCT_BUNDLE_IDENTIFIER).cloudflare</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>vvterm-cfaccess</string>
+      </array>
+    </dict>
+  </array>
+  <key>CFBundlePackageType</key>
+  <string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
+    <key>UTExportedTypeDeclarations</key>
+    <array>
+        <dict>
+            <key>UTTypeConformsTo</key>
+            <array>
+                <string>public.data</string>
+            </array>
+            <key>UTTypeDescription</key>
+            <string>VVTerm Remote File Entry</string>
+            <key>UTTypeIdentifier</key>
+            <string>app.vivy.vvterm.remote-file-entry</string>
+        </dict>
+    </array>
+    <key>CFBundleShortVersionString</key>
+    <string>$(MARKETING_VERSION)</string>
+    <key>CFBundleVersion</key>
+    <string>$(CURRENT_PROJECT_VERSION)</string>
+    <key>LSRequiresIPhoneOS</key>
+    <true/>
+    <key>UIApplicationSceneManifest</key>
+    <dict>
+        <key>UIApplicationSupportsMultipleScenes</key>
+        <true/>
+    </dict>
+    <!-- Set by ./deploy; empty builds register no Install Latest quick action (AppQuickAction) -->
+    <key>VVTermOTAManifestURL</key>
+    <string>$(VVTERM_OTA_MANIFEST_URL)</string>
+    <key>UILaunchScreen</key>
+    <dict/>
+    <key>UISupportedInterfaceOrientations</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+    <key>UISupportedInterfaceOrientations~ipad</key>
+    <array>
+        <string>UIInterfaceOrientationPortrait</string>
+        <string>UIInterfaceOrientationPortraitUpsideDown</string>
+        <string>UIInterfaceOrientationLandscapeLeft</string>
+        <string>UIInterfaceOrientationLandscapeRight</string>
+    </array>
+
+    <!-- Face ID -->
+    <key>NSFaceIDUsageDescription</key>
+    <string>VVTerm uses Face ID to unlock the app and protected servers.</string>
+
+    <!-- Live Activities -->
+    <key>NSSupportsLiveActivities</key>
+    <true/>
+
+    <!-- Background modes -->
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>remote-notification</string>
+    </array>
+
+    <!-- Local network usage -->
+    <key>NSLocalNetworkUsageDescription</key>
+    <string>VVTerm uses your local network to find, wake, and connect to SSH servers.</string>
+    <key>NSBonjourServices</key>
+    <array>
+        <string>_ssh._tcp</string>
+        <string>_sftp-ssh._tcp</string>
+    </array>
+
+    <!-- Custom fonts -->
+    <key>UIAppFonts</key>
+    <array>
+        <string>JetBrainsMonoNerdFont-Regular.ttf</string>
+        <string>HackNerdFont-Regular.ttf</string>
+        <string>FiraCodeNerdFont-Regular.ttf</string>
+        <string>MesloLGSNerdFont-Regular.ttf</string>
+    </array>
+
+    <!-- Export compliance (encryption) -->
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
+</dict>
+</plist>

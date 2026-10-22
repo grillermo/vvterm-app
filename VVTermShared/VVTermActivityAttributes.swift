@@ -1,0 +1,34 @@
+import Foundation
+
+import ActivityKit
+
+@available(iOS 16.1, *)
+nonisolated enum VVTermLiveActivityStatus: String, Codable, Hashable {
+    case connected
+    case connecting
+    case reconnecting
+    case disconnected
+
+    var label: String {
+        switch self {
+        case .connected:
+            return "Connected"
+        case .connecting:
+            return "Connecting"
+        case .reconnecting:
+            return "Reconnecting"
+        case .disconnected:
+            return "Disconnected"
+        }
+    }
+}
+
+@available(iOS 16.1, *)
+nonisolated struct VVTermActivityAttributes: ActivityAttributes {
+    struct ContentState: Codable, Hashable {
+        var status: VVTermLiveActivityStatus
+        var activeCount: Int
+    }
+
+    var appName: String
+}

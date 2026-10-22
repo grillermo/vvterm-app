@@ -1,0 +1,12 @@
+// Settings that identify whoever builds and signs the app. These defaults keep
+// a fresh clone building; put your own values in Config/Local.xcconfig, which
+// is gitignored and overrides them. See README.md.
+VVTERM_BUNDLE_ID = com.example.vvterm
+DEVELOPMENT_TEAM =
+
+// ./deploy passes the OTA manifest URL on the xcodebuild command line (xcconfig
+// would read the // in a URL as a comment). Builds made any other way leave it
+// empty, so they offer no Install Latest quick action.
+VVTERM_OTA_MANIFEST_URL =
+
+#include? "Local.xcconfig"
